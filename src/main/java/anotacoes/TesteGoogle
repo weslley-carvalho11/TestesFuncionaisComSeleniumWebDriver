@@ -1,0 +1,191 @@
+public class br.ce.weslley.test.TesteGoogle {
+    @Test
+    public void teste() {
+        System.setProperty("webdriver.gecko.driver", "C:\\Users\\Wesll\\driver\\geckodriver.exe");
+        WebDriver driver = new FirefoxDriver();
+        driver.manage().window().maximize();
+        driver.get("http://google.com");
+        Assertions.assertEquals("Google", driver.getTitle());
+    }
+}
+
+public class br.ce.weslley.test.TesteGoogle {
+    @Test
+    public void teste() {
+        WebDriver driver = new FirefoxDriver(); -> Criamos uma nova instância para poder utilizar os métodos do webdriver.
+        driver.manage().window().maximize(); -> Deixando a janela do navegador no tamanho máximo
+        driver.manage().window().setPosition(new Point(500, 500)); -> Definindo a posição na qual o navegador será exibido
+        driver.manage().window().setSize(new Dimension(1200, 720)); -> Definindo a dimensão (tamanho) da janela do navegador
+        driver.get("http://google.com"); -> Inserindo a URL do site que será acessado
+        Assertions.assertEquals("Google", driver.getTitle()); -> Afirmar que o texto esperado é igual o texto coletado pelo driver
+    }
+}
+
+public class br.ce.weslley.test.TesteGoogle {
+    @Test
+    public void teste() {
+        WebDriver driver = new FirefoxDriver();
+        driver.manage().window().maximize();
+        driver.get("http://google.com");
+        Assertions.assertEquals("Google", driver.getTitle());
+        driver.close();
+    }
+}
+
+public class br.ce.weslley.test.TesteGoogle {
+    @Test
+    public void teste() {
+        WebDriver driver = new FirefoxDriver();
+        driver.manage().window().maximize();
+        driver.get("http://google.com");
+        Assertions.assertEquals("Google", driver.getTitle());
+        driver.quit();
+    }
+}
+
+------------------------------------------------------------------------------------------------------------------------
+O que aprendemos?
+------------------------------------------------------------------------------------------------------------------------
+Como referênciar a localização do arquivo driver?
+-> System.setProperty("webdriver.gecko.driver", "C:\\Users\\Wesll\\driver\\geckodriver.exe");
+    - System.setProperty(); Serve para definir algus valores de propriedade do Selenium como por exemplo nesse caso no
+    qual inserimos a localização do driver. Como o driver já está configurado na PATH do sistema operacional não foi
+    necessário incluí-lo.
+
+Como criar uma instanciar a classe de WebDriver?
+->  WebDriver driver = new FirefoxDriver();
+    - WebDriver serve para criar uma nova instância para usar os métodos do driver como findByElement, Managent, close
+    e quit etc...
+    -> Dependendo do navegaddor escolhido para automação é necessário baixar outro driver.
+    -> Após o new nós chamamos a classe do navegador exemplo: "WebDriver driver = new FirefoxDriver();",  "WebDriver driver1 = new ChromeDriver();", "WebDriver driver2 = new EdgeDriver();".
+
+Como configurar a janela do navegador?
+->   driver.manage().window().maximize();
+    - driver.manage() é método no qual podemos gerenciar certos recursos do driver como tamanho da janela, manipular cookies e timeout.
+    - driver.manage().window() é o método no qual podemos manipular a janela do navegador.
+                               - .maximize(); É método que deixa a janela no tamanho máximo.
+                               - .setPosition(new Point(500, 500)); É método que define a posição da janela. Para isso devemos instanciar a Classe Point no qual recebe o valor de "x" e "y".
+                               - .setSize(new Dimension(1200, 720)); É método que define o tamanho (definição) da janela. Para isso devemos instanciar a classe Demension no qual recebe os valor de altura e largura.
+
+Como levar o driver até o site ou página web?
+-> driver.get();
+    - Podemos inserir tanto uma URL quanto o caminho de arquivo HTML salvo na máquina do usuário, porém a segunda prática
+    é ruim, pois não funcionará em outra máquinas. Para fazer isso deve fazer uma concatenação para tentar customizar o
+    caminho da pasta.
+
+Como confirmar se teste deu certo?
+-> Assertions.assertEquals(); Valida se o texto esperado é o mesmo que o coletado pelo driver. Ele recebe dois parametros
+   Extected(esperado), e o valor atual(actual).
+
+
+
+Anotação:
+@Test
+Faz com que o método abaixo da notação seja identificado como um teste pelo Java.
+
+@Ignore ou @Disable
+Ignora a execução do teste, usamos eles quando ainda não finalizamos um teste e não queremos dar falsos positivos e
+negativos.
+
+------------------------------------------------------------------------------------------------------------------------
+System.setProperty("nome do driver", "Caminho da pasta do driver");
+-> Quando não configuramos o driver na PATH do SO nós precisamos informar a localização atráves do System.setProperty
+-> Exemplo: System.setProperty("webdriver.gecko.driver", "C:\\Users\\Wesll\\driver\\geckodriver.exe");
+
+
+WebDriver driver = new FirefoxDriver();
+-> Aqui instanciamos um driver do navegador desejado.
+-> Exemplo:
+            - WebDriver driver = new FirefoxDriver();
+            - WebDriver driver1 = new ChromeDriver();
+            - WebDriver driver2 = new EdgeDriver();
+
+driver.manage().window().maximize();
+-> O driver irá gerenciar a janela do navegador deixando pela no tamanho maximizado.
+
+
+ driver.manage().window().setPosition(new Point(500, 500));
+ -> O driver irá gerenciar a janela definido uma posição para a janela.
+
+driver.manage().window().setSize(new Dimension(1200, 720));
+-> O driver irá definir o tamanho do janela do navegador.
+
+
+driver.get("http://google.com");
+driver.get("C:\\Users\\Wesll\\Desktop\\Selenium WebDriver\\TestesFuncionaisComSeleniumWebDriver\\Selenium WebDriver\\src\\main\\resources\\componentes.html");
+driver.get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html" );
+-> O driver irá para URL informada. Podemos adicionar também o caminho dos arquivos HTML, porém, ele funciona apenas na máquina
+de um usuário especifico. Para deixar adaptavél a qualquer computador ou usuário, devemos fazer um concatenação que nos
+leva até o arquivo. Ele funciona da seguinte forma, "file:///" + System.getProperty("user.dir") pega o nome da pasta onde
+está o java, restante são as pastas do projeto.
+
+Assertions.assertEquals("Expetativa", coletado);
+-> Certifica que o valor coletado pelo driver é mesmo que o esperado.
+
+ driver.close();
+-> O driver fecha somento uma janela do navegador.
+
+driver.quit();
+-> O driver fecha todas as abas e a instancia do WebDriver.
+
+driver.findElement(By.id))
+driver.findElement(By.tagName("h3")
+driver.findElement(By.className
+-> Para conseguir identificar um elemento na tela usamos o findElement. Podemos buscar por id, tagName, className, name,
+linkText, xpath. Dependo do conteúdo é necessário utilizar outros tipos de buscar para encontrar um elemento. O outro tipo
+de busca pela o primeiro elemento com o nome digitado, isso significa que se por exemplo você usa a busca por tag span ele
+ele encontra o valor da primeira tag span no html. A busca sempre tem que ser por métodos que tornem-o unico.
+
+driver.findElement(By.id)).sendKeys("Texto");
+-> Após identificar o textField ou textArea é digitado o texto no campo. Para pular linha usamos o "\n".
+
+driver.findElement(By.id)).getAttribute("value");
+-> Pela o valor que foi digitado. Também podemos usar o getText.
+
+
+driver.findElement(By.id("elementosForm:comidaFavorita:0")).isSelected());
+-> O Driver retorna um booleano se Radio Button e o Checkbox estão marcados. Otimo para ser usado com assertTrue.
+
+WebElement element = driver.findElement(By.id("elementosForm:escolaridade"));
+-> criamos uma variável do tipo WebElement quando queremos interagir especificamente com os elementos do campo, como por exemplo:
+Os combos. Então nós instanciamos um WebElement esse WebElement recebe os elementos encontrados pelo driver. Basicamente
+usaremos ele para colocar como parametro para um Select.
+
+
+Select select = new Select(element);
+-> Instanciamos um novo Select que recebe a váriavel com os elementos de tela. Apartir da aí conseguimos usar os métodos
+referentes a seleção de elementos.
+
+select.selectByIndex(4);
+select.selectByValue("especializacao");
+select.selectByVisibleText("2o grau completo");
+-> Existem três tipos de seleção de valores: Por index que recebe o número que sempre começa do 0, por value que é um elemento
+html comumente usado em combos, ou por texto visivél que mais aconcelhado por é o jeito mais aproximado do usuário.
+
+
+
+
+É necessário ter que analisar como funciona a fucionalidade, pois, eu adicioneiuma validação em cada uma das interações
+com a solução, sendo que só precisava de fato validar o final dela.
+
+
+3.0.0
+public class TesteGoogle {
+
+    @Before
+    public void iniciar() {
+        DriverFactory.getDriver().get("http://www.google.com");
+    }
+
+    @After
+    public void finalizar() {
+        DriverFactory.killDriver();
+    }
+
+    @Test
+    public void teste() {
+        System.out.println(DriverFactory.getDriver().getTitle());
+        Assert.assertEquals("Google", DriverFactory.getDriver().getTitle());
+    }
+
+

@@ -1,0 +1,462 @@
+public class br.ce.weslley.core.DSL {
+
+    private WebDriver driver;
+
+    public br.ce.weslley.core.DSL(WebDriver driver) {
+        this.driver = driver;
+    }
+
+    //TextFild e TestArea ---------------------------------------------------------
+    public void escrever(By by, String texto) {
+        driver.findElement(by).clear();
+        driver.findElement(by).sendKeys(texto);
+    }
+
+    public void escrever(String id_campo, String texto) { //Esse método recebe dois parâmetros, o id_campo que é o texto que informa o identificador do campo e o texto que será inserido no campo
+        driver.findElement(By.id(id_campo)).clear();
+        escrever(By.id(id_campo), texto);
+    }
+
+    public String obterValorCampo(String id_campo) { //Esse método devolve uma String, e recebe uma string do ID do cmapo
+        return driver.findElement(By.id(id_campo)).getAttribute("value"); //O driver encontra o elemento polo id informado e pega o valor do atibuto informado.
+    }
+
+    //Redio e Check -------------------------------------------------------------------------------------------
+    public void clicarRadio(String id) {
+        driver.findElement(By.id(id)).click();
+    }
+
+    public boolean isRadioMarcado(String id) {
+        return driver.findElement(By.id(id)).isSelected();
+    }
+
+    public void clicarCheck(String id) {
+        driver.findElement(By.id(id)).click();
+    }
+
+    public void isCheckMarcado(String id) {
+        driver.findElement(By.id("id")).isSelected();
+    }
+
+    //Combo
+
+    public void selecionarCombo(String id, String valor) {
+        WebElement element = driver.findElement(By.id(id));
+        Select combo = new Select(element);
+        combo.selectByVisibleText(valor);
+    }
+
+    public void desselecionarCombo(String id, String valor) {
+        WebElement element = driver.findElement(By.id(id));
+        Select combo = new Select(element);
+        combo.deselectByVisibleText(valor);
+    }
+
+    public String obterValorCombo(String id) {
+        WebElement element = driver.findElement(By.id(id));
+        Select combo = new Select(element);
+        return combo.getFirstSelectedOption().getText();
+    }
+
+    public List<String> obterValoresCombo(String id) {
+        WebElement element = driver.findElement(By.id(id));
+        Select select = new Select(element);
+        List<WebElement> opcoes = select.getAllSelectedOptions();
+        List<String> valores = new ArrayList<>();
+        for (WebElement opcao : opcoes) {
+            valores.add(opcao.getText());
+        }
+        return valores;
+    }
+
+    public int obterQuantidadeOpcoesCombo(String id) {
+        WebElement element = driver.findElement(By.id(id));
+        Select select = new Select(element);
+        List<WebElement> listaElementosCombo = select.getOptions();
+        return listaElementosCombo.size();
+    }
+
+    public boolean verificarOpcaoCombo(String id, String valor) {
+        WebElement element = driver.findElement(By.id(id));
+        Select select = new Select(element);
+        List<WebElement> opcoes = select.getOptions();
+        for (WebElement opcao : opcoes) {
+            if (opcao.getText().equals(valor)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    //Botão
+
+    public void clicarBotao(String id) {
+        driver.findElement(By.id(id)).click();
+    }
+
+    public String obterValueElemento(String id) {
+        return driver.findElement(By.id(id)).getAttribute("value");
+    }
+
+    //Link
+
+    public void clicarLink(String link) {
+        driver.findElement(By.linkText(link)).click();
+    }
+
+    //Texto
+
+    public String obterTexto(By by) { // Método público que tem como objetivo obter o texto recebe  o paramentro de By
+        return driver.findElement(by).getText(); //Returna a busca do driver por um elemento atraves do By que ele espera receber e pega o texto
+    }
+
+    public String obterTexto(String id) { // Um método publico que retorna uma string com identificador
+        return obterTexto(By.id(id)); //Ele chama o medodo de cima de obter texto
+    }
+
+    //Alert
+    public String alertaObterTexto() {
+        Alert alert = driver.switchTo().alert();
+        return alert.getText();
+    }
+
+    public String alertaObterTextoEAceite() {
+        Alert alert = driver.switchTo().alert();
+        String menssagem = alert.getText();
+        alert.accept();
+        return menssagem;
+    }
+
+    public String alertaObterTextoENega() {
+        Alert alert = driver.switchTo().alert();
+        String menssagem = alert.getText();
+        alert.dismiss();
+        return menssagem;
+    }
+
+    public void alertaEscrever(String texto) {
+        Alert alert = driver.switchTo().alert();
+        alert.sendKeys(texto);
+        alert.accept();
+    }
+
+    //Frames
+    public void entrarFrame(String frame) {
+        driver.switchTo().frame(frame);
+    }
+
+    public void sairFrame() {
+        driver.switchTo().defaultContent();
+    }
+
+    public void trocarJanela(String id) {
+        driver.switchTo().window(id);
+    }
+
+
+    //Tabela
+    public void clicarBotaoTabela(String colunaBusca, String valor, String colunaBotao, String idTabela) {
+        WebElement tabela = driver.findElement(By.xpath("//*[@id='elementosForm:tableUsuarios']"));
+        int idColuna = obterIndiceColuna(colunaBusca, tabela);
+        int idLinha = obterInciceLinha(valor, tabela, idColuna);
+        int idColunaBotao = obterIndiceColuna(colunaBotao, tabela);
+        WebElement celula = tabela.findElement(By.xpath(".//tr[" + idLinha + "]/td[" + idColunaBotao + "]"));
+        celula.findElement(By.xpath("./input")).click();
+    }
+
+ Anotação:
+ -> Não retorna nada.
+ -> O método recebe quatro parametros.
+ -> O parametro de "colunaBusca" é do tipo String. Será inserido o nome da coluna para que o indice da coluna seja buscado no método
+ de  "obterIndiceColuna".
+ -> O parametro de "valor" é do tipo String. Será usado como um dos parametros recebidos pelo o método de "obterInciceLinha".
+ Ele vai servir para encontrar o valor de uma linha especifica.
+ -> O parametro "colunaBotao" é do tipo string. Será usado para identificar o nome da coluna no qual o botão está localizado.
+ -> Durante o método criamos uma variável do tipo WebElement chamada "tabela". A variável recebe a o
+ webelement da tabela.
+ -> Criamos a variável de "int idColuna". A variável recebe o indice do método de "obterIndiceColuna".
+ Que por sua vez recebe dois valores o "colunaBusca" e "tabela", o "colunaBusca" é passado no parametro desse metodo e o
+ "tabela" é a variável criada no começo desse método.
+ -> Criamos a variável de "idLinha". A variável recebe o indice do método "obterInciceLinha". Que por sua vez
+ recebe dois três valores, o "valor", "tabela" e "idColuna",o "valor" é um dos parametros desse método, a "tabela"
+ é a variável criada no inicio do método, e o "idColuna" é variável que recebe o resultado do método de obterIndiceColuna
+ -> Criamos uma variável de "idColunaBotao". A variável recebe o resultado do "obterInciceColuna", porém, dessa vez
+ ele recebe o valor do parametro do método como o nome da coluna do botão, e o "tabela" que a variál que guarda o
+ webelement tabela.
+ -> Criamos uma chamada de "celula" do tipo webElement. É usada para receber o elemento que deve ser clicado,
+ usamos o xPath para colocar o indice da linha, e indice da coluna do botão.
+ -> Por ser do tipo webElement conseguimos usar os metodos de webelements como por exemplo o .click();
+
+
+
+
+
+
+
+
+
+
+
+    public int obterInciceLinha(String valor, WebElement tabela, int idColuna) {
+        List<WebElement> linhas = tabela.findElements(By.xpath("./tbody/tr/td[" + idColuna + "]"));
+        int idLinha = -1;
+        for (int i = 0; i < linhas.size(); i++) {
+            if (linhas.get(i).getText().equals(valor)) {
+                idLinha = i + 1;
+                break;
+            }
+        }
+        return idLinha;
+    }
+
+Anotações:
+-> Retorna um número inteiro.
+-> Recebe três parametros valor, tabela, idColuna.
+-> O parametro "valor" é o valor do tipo string, nele será inserido o valor da linha.
+-> O parametro de "tabela" é o valor do tipos WebElement, nele será inserido a webelement da tabela.
+-> O parametro de "idColuna" é o resultado do método de obterIndiceColuna que passa o número da coluna.
+-> O objetivo desse método é retonar o indice da linha onde está o valor buscado.
+
+
+
+    protected int obterIndiceColuna(String coluna, WebElement tabela) {
+        List<WebElement> colunas = driver.findElements(By.xpath(".//th"));
+        int idColuna = -1;
+        for (int i = 0; i < colunas.size(); i++) {
+            if (colunas.get(i).getText().equals(coluna)) {
+                idColuna = i + 1;
+                break;
+            }
+        }
+        return idColuna;
+    }
+
+        protected int obterIndiceColuna(String coluna, WebElement tabela) {
+            List<WebElement> colunas = driver.findElements(By.xpath(".//th"));
+            int idColuna = -1;
+            for (int i = 0; i < 6; i++) {
+                if (colunas.get(0).getText().equals(coluna)) {
+                    idColuna = i + 1; (-1) + 2 = 1
+                    break;
+                }
+            }
+            return idColuna;
+        }
+Anotação:
+-> Retorna um número inteiro.
+-> Recebe dois paramêtros coluna e tabela.
+-> O paramêtro de coluna = É um texto com o nome da coluna.
+-> O paramêtro de tabela = É o identificador que leva até a tabela.
+-> Criamos uma variável do tipo lista que recebe todos os valores com o nomes das colunas.
+-> Criamos uma variável do tipo número inteiro, idColuna = -1, pois, a variável i começa com 0, ele faz a seguinte
+validação i (igual a 0) é menor que o tamanho da lista, se não adicionar mais um 0 + 1 = 1.
+IdColuna recebe 1 + 1 = 2, então idColuna(-1)+2 = 1 pois o indice dos elementos em HTML começa do um.
+-> Ao final ele retona o indice da coluna buscada.
+
+    public Object executarJavaScript(String comando, Object... parametro){
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        return  js.executeScript(comando, parametro);
+    }
+}
+
+
+
+
+public class DSL {
+
+
+    //TextFild e TestArea ----------------------------------------------------------------------------------------------
+    public void escrever(By by, String texto) {
+        DriverFactory.getDriver().findElement(by).clear();
+        DriverFactory.getDriver().findElement(by).sendKeys(texto);
+    }
+
+    public void escrever(String id_campo, String texto) {
+        DriverFactory.getDriver().findElement(By.id(id_campo)).clear();
+        escrever(By.id(id_campo), texto);
+    }
+
+    public String obterValorCampo(String id_campo) {
+        return DriverFactory.getDriver().findElement(By.id(id_campo)).getAttribute("value");
+    }
+
+    //Radio Button e Checkbox ------------------------------------------------------------------------------------------
+    public void clicarRadio(By by) {
+        DriverFactory.getDriver().findElement(by).click();
+    }
+
+    public void clicarRadio(String id) {
+        clicarRadio(By.id(id));
+    }
+
+    public boolean isRadioMarcado(String id) {
+        return DriverFactory.getDriver().findElement(By.id(id)).isSelected();
+    }
+
+    public void clicarCheck(String id) {
+        DriverFactory.getDriver().findElement(By.id(id)).click();
+    }
+
+    public void isCheckMarcado(String id) {
+        DriverFactory.getDriver().findElement(By.id("id")).isSelected();
+    }
+
+    //Combo-------------------------------------------------------------------------------------------------------------
+
+    public void selecionarCombo(String id, String valor) {
+        WebElement element = DriverFactory.getDriver().findElement(By.id(id));
+        Select combo = new Select(element);
+        combo.selectByVisibleText(valor);
+    }
+
+    public void desselecionarCombo(String id, String valor) {
+        WebElement element = DriverFactory.getDriver().findElement(By.id(id));
+        Select combo = new Select(element);
+        combo.deselectByVisibleText(valor);
+    }
+
+    public String obterValorCombo(String id) {
+        WebElement element = DriverFactory.getDriver().findElement(By.id(id));
+        Select combo = new Select(element);
+        return combo.getFirstSelectedOption().getText();
+    }
+
+    public List<String> obterValoresCombo(String id) {
+        WebElement element = DriverFactory.getDriver().findElement(By.id(id));
+        Select select = new Select(element);
+        List<WebElement> opcoes = select.getAllSelectedOptions();
+        List<String> valores = new ArrayList<>();
+        for (WebElement opcao : opcoes) {
+            valores.add(opcao.getText());
+        }
+        return valores;
+    }
+
+    public int obterQuantidadeOpcoesCombo(String id) {
+        WebElement element = DriverFactory.getDriver().findElement(By.id(id));
+        Select select = new Select(element);
+        List<WebElement> listaElementosCombo = select.getOptions();
+        return listaElementosCombo.size();
+    }
+
+    public boolean verificarOpcaoCombo(String id, String valor) {
+        WebElement element = DriverFactory.getDriver().findElement(By.id(id));
+        Select select = new Select(element);
+        List<WebElement> opcoes = select.getOptions();
+        for (WebElement opcao : opcoes) {
+            if (opcao.getText().equals(valor)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void selecionarComboPrime(String radical, String valor) {
+        clicarRadio(By.xpath("//*[@id=']" + radical + "_input]/../..//span"));
+        //select[@id='j_idt246:option_input']/option[@value='Option1']
+        clicarRadio(By.xpath("//*[@id='']" + radical + "_items]//li[.='" + valor + "']"));
+    }
+
+    //Botão-------------------------------------------------------------------------------------------------------------
+
+    public void clicarBotao(String id) {
+        DriverFactory.getDriver().findElement(By.id(id)).click();
+    }
+
+    public String obterValueElemento(String id) {
+        return DriverFactory.getDriver().findElement(By.id(id)).getAttribute("value");
+    }
+
+    //Link
+
+    public void clicarLink(String link) {
+        DriverFactory.getDriver().findElement(By.linkText(link)).click();
+    }
+
+    //Texto-------------------------------------------------------------------------------------------------------------
+
+    public String obterTexto(By by) {
+        return DriverFactory.getDriver().findElement(by).getText();
+    }
+
+    public String obterTexto(String id) {
+        return obterTexto(By.id(id));
+    }
+
+    //Alert
+    public String alertaObterTexto() {
+        Alert alert = DriverFactory.getDriver().switchTo().alert();
+        return alert.getText();
+    }
+
+    public String alertaObterTextoEAceite() {
+        Alert alert = DriverFactory.getDriver().switchTo().alert();
+        String menssagem = alert.getText();
+        alert.accept();
+        return menssagem;
+    }
+
+    public String alertaObterTextoENega() {
+        Alert alert = DriverFactory.getDriver().switchTo().alert();
+        String menssagem = alert.getText();
+        alert.dismiss();
+        return menssagem;
+    }
+
+    public void alertaEscrever(String texto) {
+        Alert alert = DriverFactory.getDriver().switchTo().alert();
+        alert.sendKeys(texto);
+        alert.accept();
+    }
+
+    //Frames-----------------------------------------------------------------------------------------------------------
+    public void entrarFrame(String frame) {
+        DriverFactory.getDriver().switchTo().frame(frame);
+    }
+
+    public void sairFrame() {
+        DriverFactory.getDriver().switchTo().defaultContent();
+    }
+
+    public void trocarJanela(String id) {
+        DriverFactory.getDriver().switchTo().window(id);
+    }
+
+    //Tabela-------------------------------------------------------------------------------------------------------------
+    public void clicarBotaoTabela(String colunaBusca, String valor, String colunaBotao, String idTabela) {
+        WebElement tabela = DriverFactory.getDriver().findElement(By.xpath("//*[@id='elementosForm:tableUsuarios']"));
+        int idColuna = obterIndiceColuna(colunaBusca, tabela);
+        int idLinha = obterInciceLinha(valor, tabela, idColuna);
+        int idColunaBotao = obterIndiceColuna(colunaBotao, tabela);
+        WebElement celula = tabela.findElement(By.xpath(".//tr[" + idLinha + "]/td[" + idColunaBotao + "]"));
+        celula.findElement(By.xpath("./input")).click();
+    }
+
+    protected int obterInciceLinha(String valor, WebElement tabela, int idColuna) {
+        List<WebElement> linhas = tabela.findElements(By.xpath("./tbody/tr/td[" + idColuna + "]"));
+        int idLinha = -1;
+        for (int i = 0; i < linhas.size(); i++) {
+            if (linhas.get(i).getText().equals(valor)) {
+                idLinha = i + 1;
+                break;
+            }
+        }
+        return idLinha;
+    }
+
+    protected int obterIndiceColuna(String coluna, WebElement tabela) {
+        List<WebElement> colunas = DriverFactory.getDriver().findElements(By.xpath(".//th"));
+        int idColuna = -1;
+        for (int i = 0; i < colunas.size(); i++) {
+            if (colunas.get(i).getText().equals(coluna)) {
+                idColuna = i + 1;
+                break;
+            }
+        }
+        return idColuna;
+    }
+
+    public Object executarJavaScript(String comando, Object... parametro) {
+        JavascriptExecutor js = (JavascriptExecutor) DriverFactory.getDriver();
+        return js.executeScript(comando, parametro);
+    }

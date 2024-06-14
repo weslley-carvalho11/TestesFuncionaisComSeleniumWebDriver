@@ -1,0 +1,156 @@
+public class br.ce.weslley.test.TesteAlert {
+    @Test
+    public void deveInteragirComAlert() {
+        WebDriver driver = new FirefoxDriver();
+        driver.manage().window().maximize();
+        driver.get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
+
+        driver.findElement(By.id("alert")).click();
+        Alert alert = driver.switchTo().alert();
+        String texto = alert.getText();
+        Assertions.assertEquals("Alert Simples", texto);
+        alert.accept();
+
+        driver.findElement(By.id("elementosForm:nome")).sendKeys(texto);
+    }
+
+    @Test
+    public void deveInteragirComAlertConfirm() {
+        WebDriver driver = new FirefoxDriver();
+        driver.manage().window().maximize();
+        driver.get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
+
+
+        driver.findElement(By.id("confirm")).click();
+        Alert alert = driver.switchTo().alert();
+        Assertions.assertEquals("Confirm Simples", alert.getText());
+        alert.accept();
+        Assertions.assertEquals("Confirmado", alert.getText());
+        alert.accept();
+
+
+        driver.findElement(By.id("confirm")).click();
+        Alert alerta = driver.switchTo().alert();
+        Assertions.assertEquals("Confirm Simples", alerta.getText());
+        alert.dismiss();
+        Assertions.assertEquals("Negado", alerta.getText());
+        alert.accept();
+
+        driver.quit();
+    }
+
+
+    @Test
+    public void deveInteragirComAlertPrompt() {
+        WebDriver driver = new FirefoxDriver();
+        driver.manage().window().maximize();
+        driver.get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
+
+        driver.findElement(By.id("prompt")).click();
+        Alert alert = driver.switchTo().alert();
+        Assertions.assertEquals("Digite um numero", alert.getText());
+        alert.sendKeys("12");
+        alert.accept();
+        Assertions.assertEquals("Era 12?", alert.getText());
+        alert.accept();
+        Assertions.assertEquals(":D", alert.getText());
+    }
+
+}
+
+
+public class br.ce.weslley.test.TesteAlert {
+
+    private WebDriver driver;
+    private br.ce.weslley.core.DSL dsl;
+
+    @BeforeEach
+    public void iniciar() {
+        driver = new FirefoxDriver();
+        driver.manage().window().maximize();
+        driver.get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
+        driver.manage().timeouts().implicitlyWait(15, TimeUnit.SECONDS);
+        dsl = new br.ce.weslley.core.DSL(driver);
+    }
+
+    @AfterEach
+    public void finalizar() {
+        //driver.quit();
+    }
+
+    @Test
+    public void deveInteragirComAlert() {
+        dsl.clicarBotao("alert");
+        String texto = dsl.alertaObterTextoEAceita();
+        Assertions.assertEquals("Alert Simples", texto);
+        dsl.escrever("elementosForm:nome", texto);
+
+    }
+
+    @Test
+    public void deveInteragirComAlertConfirm() {
+        dsl.clicarBotao("confirm");
+        Assertions.assertEquals("Confirm Simples", dsl.alertaObterTextoEAceita());
+        Assertions.assertEquals("Confirmado", dsl.alertaObterTextoEAceita());
+
+
+        dsl.clicarBotao("confirm");
+        Assertions.assertEquals("Confirm Simples", dsl.alertaObterTextoENega());
+        Assertions.assertEquals("Negado", dsl.alertaObterTextoEAceita());
+    }
+
+
+    @Test
+    public void deveInteragirComAlertPrompt() {
+        dsl.clicarBotao("prompt");
+        Assertions.assertEquals("Digite um numero", dsl.alertaObterTexto());
+        dsl.alertaEscrever("12");
+        Assertions.assertEquals("Era 12?", dsl.alertaObterTextoEAceita());
+        Assertions.assertEquals(":D", dsl.alertaObterTextoEAceita());
+    }
+}
+
+3.0.0public class TesteAlert {
+
+         private DSL dsl;
+
+         @Before
+         public void iniciar() {
+             DriverFactory.getDriver().get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
+             dsl = new DSL();
+         }
+
+         @After
+         public void finalizar() {
+             DriverFactory.killDriver();
+         }
+
+         @Test
+         public void deveInteragirComAlert() {
+             dsl.clicarBotao("alert");
+             String texto = dsl.alertaObterTextoEAceite();
+             Assert.assertEquals("Alert Simples", texto);
+             dsl.escrever("elementosForm:nome", texto);
+
+         }
+
+         @Test
+         public void deveInteragirComAlertConfirm() {
+             dsl.clicarBotao("confirm");
+             Assert.assertEquals("Confirm Simples", dsl.alertaObterTextoEAceite());
+             Assert.assertEquals("Confirmado", dsl.alertaObterTextoEAceite());
+
+
+             dsl.clicarBotao("confirm");
+             Assert.assertEquals("Confirm Simples", dsl.alertaObterTextoENega());
+             Assert.assertEquals("Negado", dsl.alertaObterTextoEAceite());
+         }
+
+         @Test
+         public void deveInteragirComAlertPrompt() {
+             dsl.clicarBotao("prompt");
+             Assert.assertEquals("Digite um numero", dsl.alertaObterTexto());
+             dsl.alertaEscrever("12");
+             Assert.assertEquals("Era 12?", dsl.alertaObterTextoEAceite());
+             Assert.assertEquals(":D", dsl.alertaObterTextoEAceite());
+         }

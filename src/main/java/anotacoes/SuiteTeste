@@ -1,0 +1,12 @@
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+        TesteCadastro.class,
+        TesteRegrasCadastro.class
+})
+public class SuiteTeste {
+
+    @AfterClass
+    public static void finalizaTudo() {
+        DriverFactory.killDriver();
+    }
+}

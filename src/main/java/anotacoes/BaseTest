@@ -1,0 +1,8 @@
+public class BaseTest {
+    @After
+    public void finalizar() {
+        if (Propriedades.fechar_browser) {
+            DriverFactory.killDriver();
+        }
+    }
+}

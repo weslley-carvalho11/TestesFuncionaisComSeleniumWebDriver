@@ -1,0 +1,33 @@
+import org.junit.Assert;
+import org.junit.Test;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+
+public class TesteGoogle {
+
+    // modificamo o método para método de teste, para isso, adicionamos o @Test
+    //No IntelliJ não conseguimos rodar no botão de "play".
+    @Test
+    public void teste() {
+        // Caso eu não tivesse refênciado abaixo a extensão e quisesse usar uma que está sendo usuda na minha máquina eu uso o comando abaixo:
+        //System.setProperty("webdriver.gecko.driver", "C:/Users/Wesll/driver/geckodriver.exe");
+        WebDriver driver = new FirefoxDriver();
+        // Tipo WebDriver, cria uma variável e cria um novo webdriver do Firefox
+        // O nome do váriavel é o mesmo nome da pasta se for diferente não roda
+        driver.get("http://www.google.com");
+        // O driver abre o link
+        //Junit é depedencia do Selenium
+        System.out.println(driver.getTitle());
+        // Pedimos o para sistema exibir o título da página para conferir se deu certo
+        Assert.assertEquals("Googlee", driver.getTitle());
+        //afirmar que o texto coletado pelo driver é igual ao string digitada
+    }
+}
+//São testes funcionais
+//assert = afirmar
+//Quando existe um teste que falhou conseguimos ver no console o que aconteceu
+//No chrome é necessário fazer o comando abaixo:
+https://chromedriver.chromium.org/security-considerations
+//Na versão 3 do Firefox não funciona afunção de colocar a posição na tela
+
+

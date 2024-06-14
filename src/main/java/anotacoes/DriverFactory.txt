@@ -1,0 +1,58 @@
+public class DriverFactory {
+    private static WebDriver driver;
+
+Anotação:
+-> Instanciamos um "WebDriver";
+
+    private DriverFactory() {
+    }
+-> Adicionamos um construtor.
+
+    public static WebDriver getDriver() {
+        if (driver == null) {
+            driver = new FirefoxDriver();
+            driver.manage().window().maximize();
+        }
+        return driver;
+    }
+-> Método público que pode ser usado em outras classes.
+-> Static para que não seja necessário instanciar a classe e centralizar a instanciação do WebDriver em único método.
+-> Isso faz com que exista apenas um único driver, esse unico driver é manipulado em apenas um lugar.
+-> Se o driver for igual a null, ou seja, ele não existir, ele cria um novo driver e faz as configurações do tamanho da
+janela, senão retorna o driver ativo.
+
+    
+
+
+
+    public static void killDriver(){
+        if (driver != null) {
+            driver.quit();
+            driver = null;
+        }
+    }
+
+-> Método if o driver for diferente de null, significa que ele está ativo, se estiver ativo deve fechar todas as janelas
+do navegador e ser desabilitado.
+}
+
+Anotação:
+Um teste sempre irá trabalhar na mesma instância do browser.
+Para sentralizar criamos uma classe que usa os padrões de projeto
+singleton e factory.
+Precisa ter uma instancia do webdriver
+Precisa ser estatica
+Criamos um construtor vazio e privado para tornar impossivel a instaciação da classe
+O método vai centralizar
+Se o driver já foi instanciado ele retiliza mesma instancia.
+S
+
+
+Static faz com que não seja necessário intânciar um objeto, para conseguems usar os métodos.
+Escrever o nome da classe é método.
+Só existe uma única cópia dela em todo código.
+Quando uma variável é declarada estática na programação Java, significa que a variável pertence à própria classe,
+e não a qualquer instância específica da classe. Isso significa que existe apenas uma cópia da variável na memória,
+independentemente de quantas instâncias da classe forem criadas.
+
+

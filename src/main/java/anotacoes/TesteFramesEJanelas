@@ -1,0 +1,197 @@
+Anotações:
+@Test -> Faz com que o executor do Java identifique o método como um teste.
+
+
+
+Versão: 1.0.0
+public class TestesFramesEJanelas {
+    @Test
+    public void deveInterairComFrames() {
+        WebDriver driver = new FirefoxDriver();
+        driver.manage().window().setSize(new Dimension(1200, 720));
+        driver.get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
+
+        driver.switchTo().frame("frame1");
+        driver.findElement(By.id("frameButton")).click();
+        Alert alert = driver.switchTo().alert();
+        String mensagem = alert.getText();
+        Assertions.assertEquals("Frame OK!", mensagem);
+        alert.accept();
+        driver.switchTo().defaultContent();
+        driver.findElement(By.id("elementosForm:nome")).sendKeys(mensagem);
+
+        driver.quit();
+    }
+
+    @Test
+    public void deveInteragirComJanelas() {
+        WebDriver driver = new FirefoxDriver();
+        driver.manage().window().setSize(new Dimension(1200, 720));
+        driver.get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
+
+        driver.findElement(By.id("buttonPopUpEasy")).click();
+        driver.switchTo().window("Popup");
+        driver.findElement(By.tagName("textarea")).sendKeys("Deu certo?");
+        driver.close();
+
+        driver.switchTo().window(driver.getWindowHandles().toArray()[0].toString());
+        driver.findElement(By.id("elementosForm:sugestoes")).sendKeys("E agora?");
+        driver.quit();
+    }
+
+    @Test
+    public void devInteragirComJanelasSemTitulo() {
+        WebDriver driver = new FirefoxDriver();
+        driver.manage().window().setSize(new Dimension(1200, 720));
+        driver.get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
+
+        driver.findElement(By.id("buttonPopUpHard")).click();
+        System.out.println(driver.getWindowHandle());
+        System.out.println(driver.getWindowHandles());
+        driver.switchTo().window(driver.getWindowHandles().toArray()[1].toString());
+        driver.findElement(By.tagName("textArea")).sendKeys("Deu certo?");
+        driver.switchTo().window(driver.getWindowHandles().toArray()[0].toString());
+        driver.findElement(By.tagName("textArea")).sendKeys("E agora?");
+        driver.quit();
+    }
+}
+
+
+Versão 2.0.0
+public class TestesFramesEJanelas {
+
+    private WebDriver driver;
+    private br.ce.weslley.core.DSL dsl;
+
+    @BeforeEach
+    public void iniciar() {
+        driver = new FirefoxDriver();
+        driver.manage().window().maximize();
+        driver.get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
+        dsl = new br.ce.weslley.core.DSL(driver);
+    }
+
+    @AfterEach
+    public void finalizar() {
+        driver.quit();
+    }
+
+    @Test
+    public void deveInterairComFrames() {
+        dsl.entrarFrame("frame1");
+        dsl.clicarBotao("frameButton");
+        String menssagem = dsl.alertaObterTextoEAceita();
+        Assertions.assertEquals("Frame OK!", menssagem);
+        dsl.sairFrame();
+        dsl.escrever("elementosForm:nome", menssagem);
+    }
+
+    @Test
+    public void deveInteragirComJanelas() {
+        dsl.clicarBotao("buttonPopUpEasy");
+        dsl.trocarJanelas("Popup");
+        dsl.escrever(By.tagName("textarea"), "Deu certo?");
+        driver.close();
+        dsl.trocarJanelas(driver.getWindowHandles().toArray()[0].toString());
+        dsl.escrever("elementosForm:sugestoes", "E agora?");
+    }
+
+    @Test
+    public void devInteragirComJanelasSemTitulo() {
+        dsl.clicarBotao("buttonPopUpHard");
+        dsl.trocarJanelas(driver.getWindowHandles().toArray()[1].toString());
+        dsl.escrever(By.tagName("textArea"), "Deu certo?");
+        dsl.trocarJanelas(driver.getWindowHandles().toArray()[0].toString());
+        dsl.escrever(By.tagName("textArea"), "E agora?");
+    }
+}
+
+
+
+
+Versão: 3.0.0
+    @Test
+    public void deveInteragirComFrameEscondido() {
+        WebElement frame = driver.findElement(By.id("frame2"));
+        dsl.executarJavaScript("window.scrollBy(0, arguments[0])", frame.getLocation().y);
+        dsl.entrarFrame("frame2");
+        dsl.clicarBotao("frameButton");
+        String msg = dsl.alertaObterTextoEAceite();
+        Assert.assertEquals("Frame OK!", msg);
+    }
+
+Há situações nas quais o driver não consegue encontrar o elemento, pois, está fora do visão de alcanse do driver.
+Para resolver isso, nós usamos um comando no JavaScript para fazer com que o scroll vá até o elemento desejado, assim
+possibilitando a interação com elemento.
+
+WebElement frame = driver.findElement(By.id("frame2"));
+-> Criamos uma variável do tipo WebElement que recebe o "frame2". Criamos normalmente uma variável, pois, iremos manipular
+o elemento.
+
+dsl.executarJavaScript("window.scrollBy(0, arguments[0])", frame.getLocation().y);
+-> Usamos um comando adicionado na DSl no qual nos possibilita usar comando JavaScript passando como paramêtros o comando
+javascript que deve ser executado, e alguns paramêtros (valores) que o comando javascript irá utilizar.
+-> O comando é "window.scrollBy(0, arguments[0])" onde o primeiro valor é largura e altura.
+-> frame.getLocation().y pegamos a localização do eixo y do elemento "frame2", esse valor é passado como arguments[0].
+
+
+
+3.0.0
+public class TesteFrameEJanelas {
+    private DSL dsl;
+
+    @Before
+    public void iniciar() {
+        DriverFactory.getDriver().manage().timeouts().implicitlyWait(20, TimeUnit.MICROSECONDS);
+        DriverFactory.getDriver().get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
+        dsl = new DSL();
+    }
+
+    @After
+    public void finalizar() {
+        DriverFactory.killDriver();
+    }
+
+    @Test
+    public void deveInteragirComFrames() {
+        dsl.entrarFrame("Frame1");
+        dsl.clicarBotao("frameButton");
+        String msg = dsl.alertaObterTextoEAceite();
+        Assert.assertEquals("Frame OK!", msg);
+        dsl.sairFrame();
+        dsl.escrever("elementosForm:nome", msg);
+    }
+
+    @Test
+    public void deveInteragirComJanelas() {
+        dsl.clicarBotao("buttonPopUpEasy");
+        dsl.trocarJanela("Popup");
+        dsl.escrever(By.tagName("textarea"), "Deu certo?");
+        DriverFactory.getDriver().close();
+        dsl.trocarJanela((String) DriverFactory.getDriver().getWindowHandles().toArray()[0]);
+        dsl.escrever(By.tagName("textarea"), "e agora?");
+    }
+
+    @Test
+    public void deveInteragirComJanelasSemTitulo() {
+        dsl.clicarBotao("buttonPopUpHard");
+        System.out.println(DriverFactory.getDriver().getWindowHandle());
+        System.out.println(DriverFactory.getDriver().getWindowHandles());
+        dsl.trocarJanela((String) DriverFactory.getDriver().getWindowHandles().toArray()[1]);
+        dsl.escrever(By.tagName("textarea"), "Deu certo?");
+        dsl.trocarJanela((String) DriverFactory.getDriver().getWindowHandles().toArray()[0]);
+        dsl.escrever(By.tagName("textarea"), "e agora?");
+    }
+
+    @Test
+    public void deveInteragirComFrameEscondido() {
+        WebElement frame = DriverFactory.getDriver().findElement(By.id("frame2"));
+        dsl.executarJavaScript("window.scrollBy(0, arguments[0])", frame.getLocation().y);
+        dsl.entrarFrame("frame2");
+        dsl.clicarBotao("frameButton");
+        String msg = dsl.alertaObterTextoEAceite();
+        Assert.assertEquals("Frame OK!", msg);
+    }
+
+
+

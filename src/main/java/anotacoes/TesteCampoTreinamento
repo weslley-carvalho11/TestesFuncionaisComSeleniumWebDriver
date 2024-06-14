@@ -1,0 +1,323 @@
+public class br.ce.weslley.test.TesteCampoTreinamento {
+    @Test
+    public void deveInteragirComTextField() {
+        WebDriver driver = new FirefoxDriver();
+        driver.manage().window().maximize();
+        driver.get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
+        driver.findElement(By.id("elementosForm:nome")).sendKeys("Weslley");//+
+        Assertions.assertEquals("Weslley", driver.findElement(By.id("elementosForm:nome")).getAttribute("value"));
+        driver.quit();
+    }
+
+    @Test
+    public void deveInteragirComTextArea() {
+        WebDriver driver = new FirefoxDriver();
+        driver.manage().window().maximize();
+        driver.get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
+        driver.findElement(By.id("elementosForm:sugestoes")).sendKeys("Esse é o texto da descrição.\n Testando formulário.");
+        Assertions.assertEquals("Esse é o texto da descrição.\n Testando formulário.", driver.findElement(By.id("elementosForm:sugestoes")).getAttribute("value"));
+        driver.quit();
+    }
+
+    @Test
+    public void deveInteragirComRadioButton() {
+        WebDriver driver = new FirefoxDriver();
+        driver.manage().window().maximize();
+        driver.get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
+        driver.findElement(By.id("elementosForm:sexo:0")).click();
+        Assertions.assertTrue(driver.findElement(By.id("elementosForm:sexo:0")).isSelected());
+        driver.quit();
+    }
+
+    @Test
+    public void deveInteragirComCheckbox() {
+        WebDriver driver = new FirefoxDriver();
+        driver.manage().window().maximize();
+        driver.get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
+        driver.findElement(By.id("elementosForm:comidaFavorita:0")).click();
+        Assertions.assertTrue(driver.findElement(By.id("elementosForm:comidaFavorita:0")).isSelected());
+        driver.quit();
+    }
+
+    @Test
+    public void deveInteragirComCambo() {
+        WebDriver driver = new FirefoxDriver();
+        driver.manage().window().maximize();
+        driver.get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
+        WebElement element = driver.findElement(By.id("elementosForm:escolaridade"));
+        Select select = new Select(element);
+        //select.selectByIndex(4);
+        //select.selectByValue("especializacao");
+        select.selectByVisibleText("2o grau completo");
+        Assertions.assertEquals("2o grau completo", select.getFirstSelectedOption().getText());
+        driver.quit();
+    }
+
+    @Test
+    public void deveVerificarValoresCombo() {
+        WebDriver driver = new FirefoxDriver();
+        driver.manage().window().maximize();
+        driver.get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
+        WebElement element = driver.findElement(By.id("elementosForm:escolaridade"));
+        Select combo = new Select(element);
+        List<WebElement> options = combo.getOptions();
+        Assertions.assertEquals(8, options.size());
+
+        boolean encontrou = false;
+        for (WebElement option : options) {
+            if (option.getText().equals("Mestrado")) {
+                encontrou = true;
+                break;
+            }
+        }
+        Assertions.assertTrue(encontrou);
+        driver.quit();
+    }
+
+    @Test
+    public void deveVerificarValoresComboMultiplo() {
+        //Instaciar o WebDriver
+        WebDriver driver = new FirefoxDriver();
+        //Ajustar janela
+        driver.manage().window().maximize();
+        //Ir até o site
+        driver.get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
+        //selecionar valores
+        WebElement element = driver.findElement(By.id("elementosForm:esportes"));
+        Select combo = new Select(element);
+        combo.selectByVisibleText("Natacao");
+        combo.selectByVisibleText("Corrida");
+        combo.selectByVisibleText("Karate");
+        //conferir se o número de valores selecionado está igual ao valor esperado.
+        List<WebElement> allSelectedOptions = combo.getAllSelectedOptions();
+        Assertions.assertEquals(3, allSelectedOptions.size());
+
+        combo.deselectByVisibleText("Corrida");
+        allSelectedOptions = combo.getAllSelectedOptions();
+        Assertions.assertEquals(2, allSelectedOptions.size());
+        driver.quit();
+    }
+
+    @Test
+    public void deveInteragirComBotoes() {
+        WebDriver driver = new FirefoxDriver();
+        driver.manage().window().maximize();
+        driver.get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
+        WebElement botao = driver.findElement(By.id("buttonSimple"));
+        botao.click();
+
+        Assertions.assertEquals("Obrigado!", botao.getAttribute("value"));
+        driver.quit();
+    }
+
+    @Test
+    public void deveInteragirComLinks() {
+        WebDriver driver = new FirefoxDriver();
+        driver.manage().window().maximize();
+        driver.get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
+        driver.findElement(By.linkText("Voltar")).click();
+        Assertions.assertEquals("Voltou!", driver.findElement(By.id("resultado")).getText());
+        driver.quit();
+    }
+
+    @Test
+    public void deveBuscarextoNaPagina() {
+        WebDriver driver = new FirefoxDriver();
+        driver.manage().window().maximize();
+        driver.get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
+        //Assertions.assertTrue(driver.findElement(By.tagName("body")).getText().contains("Campo de Treinamento"));
+        Assertions.assertEquals("Campo de Treinamento", driver.findElement(By.tagName("h3")).getText());
+        Assertions.assertEquals("Cuidado onde clica, muitas armadilhas...", driver.findElement(By.className("facilAchar")).getText());
+    }
+}
+
+public class br.ce.weslley.test.TesteCampoTreinamento {
+
+    private WebDriver driver;
+    private br.ce.weslley.core.DSL dsl;
+
+    @BeforeEach
+    public void iniciar() {
+        driver = new FirefoxDriver();
+        driver.manage().window().maximize();
+        driver.get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
+        dsl = new br.ce.weslley.core.DSL(driver);
+    }
+
+    @AfterEach
+    public void finalizar() {
+        //driver.quit();
+    }
+
+    @Test
+    public void deveInteragirComTextField() {
+        dsl.escrever("elementosForm:nome", "Weslley");
+        Assertions.assertEquals("Weslley", dsl.obterValorCampo("elementosForm:nome"));
+    }
+
+    @Test
+    public void deveInteragirComTextArea() {
+        dsl.escrever("elementosForm:sugestoes", "Esse é o texto da descrição.\n Testando formulário.");
+        Assertions.assertEquals("Esse é o texto da descrição.\n Testando formulário.", dsl.obterValorCampo("elementosForm:sugestoes"));
+    }
+
+    @Test
+    public void deveInteragirComRadioButton() {
+        dsl.clicarRadio("elementosForm:sexo:0");
+        Assertions.assertTrue(dsl.isRadioMarcado("elementosForm:sexo:0"));
+    }
+
+    @Test
+    public void deveInteragirComCheckbox() {
+        dsl.clicarRadio("elementosForm:comidaFavorita:0");
+        Assertions.assertTrue(dsl.isRadioMarcado("elementosForm:comidaFavorita:0"));
+    }
+
+    @Test
+    public void deveInteragirComCambo() {
+        dsl.selecionarCombo("elementosForm:escolaridade", "2o grau completo");
+        Assertions.assertEquals("2o grau completo", dsl.obterValorCombo("elementosForm:escolaridade"));
+    }
+
+    @Test
+    public void deveVerificarValoresCombo() {
+        Assertions.assertEquals(8, dsl.obterQuantidadeOpcoesCombo("elementosForm:escolaridade"));
+        Assertions.assertTrue(dsl.verificaOpcaoCombo("elementosForm:escolaridade", "Mestrado"));
+    }
+
+    @Test
+    public void deveVerificarValoresComboMultiplo() {
+        dsl.selecionarCombo("elementosForm:esportes", "Natacao");
+        dsl.selecionarCombo("elementosForm:esportes", "Corrida");
+        dsl.selecionarCombo("elementosForm:esportes", "Karate");
+
+        List<String> opcoesMarcadas = dsl.obterValoresCombo("elementosForm:esportes");
+        Assertions.assertEquals(3, opcoesMarcadas.size());
+
+        dsl.desselecionarCombo("elementosForm:esportes", "Natacao");
+        opcoesMarcadas = dsl.obterValoresCombo("elementosForm:esportes");
+        Assertions.assertEquals(2, opcoesMarcadas.size());
+        opcoesMarcadas.containsAll(Arrays.asList("Corrida", "Karate"));
+    }
+
+    //O Arrayas.asList(...) cria uma lista a partir dos valores enviados
+
+    @Test
+    public void deveInteragirComBotoes() {
+        dsl.clicarBotao("buttonSimple");
+        Assertions.assertEquals("Obrigado!", dsl.obterValorCampo("buttonSimple"));
+    }
+
+    @Test
+    public void deveInteragirComLinks() {
+        dsl.clicarLink("Voltar");
+        Assertions.assertEquals("Voltou!", dsl.obterTexto("resultado"));
+    }
+
+    @Test
+    public void deveBuscarextoNaPagina() {
+        Assertions.assertEquals("Campo de Treinamento", dsl.obterTexto(By.tagName("h3")));
+        Assertions.assertEquals("Cuidado onde clica, muitas armadilhas...", dsl.obterTexto(By.className("facilAchar")));
+    }
+}
+
+
+3.0.0
+public class TesteCampoTreinamento {
+
+    private DSL dsl;
+    private CampoTreinamentoPage page;
+
+    @Before
+    public void iniciar() {
+        DriverFactory.getDriver().get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
+        dsl = new DSL();
+        page = new CampoTreinamentoPage();
+    }
+
+    @After
+    public void finalizar() {
+        DriverFactory.killDriver();
+    }
+
+    @Test
+    public void preencherCampoNome() {
+        page.setNome("Weslley");
+        Assert.assertEquals("Weslley", dsl.obterValorCampo("elementosForm:nome"));
+    }
+
+    @Test
+    public void testeTextField() {
+        page.setSobrenome("Santos");
+        Assert.assertEquals("Santos", dsl.obterValorCampo("elementosForm:sobrenome"));
+    }
+
+    @Test
+    public void deveInteragirComTextArea() {
+        dsl.escrever("elementosForm:sugestoes", "Texto" + "\n" + "Texto2");
+        Assert.assertEquals("Texto" + "\n" + "Texto2", DriverFactory.getDriver().findElement(By.id("elementosForm:sugestoes")).getAttribute("value"));
+    }
+
+    @Test
+    public void deveInteragirComRadioButton() {
+        page.setSexoMasculino();
+        Assert.assertTrue(dsl.isRadioMarcado("elementosForm:sexo:0"));
+    }
+
+    @Test
+    public void deveInteragirComCheckbox() {
+        page.setCarne();
+        Assert.assertTrue(DriverFactory.getDriver().findElement(By.id("elementosForm:comidaFavorita:0")).isSelected());
+    }
+
+    @Test
+    public void deveInteragirComCombo() {
+        page.setEscolaridade("Mestrado");
+        Assert.assertEquals("Mestrado", dsl.obterValorCombo("elementosForm:escolaridade"));
+    }
+
+    @Test
+    public void deveVerificarValoresComboMitiplo() {
+        dsl.selecionarCombo("elementosForm:esportes", "Natacao");
+        dsl.selecionarCombo("elementosForm:esportes", "Corrida");
+        dsl.selecionarCombo("elementosForm:esportes", "Karate");
+
+        List<String> opcoesMarcadas = dsl.obterValoresCombo("elementosForm:esportes");
+        Assert.assertEquals(3, opcoesMarcadas.size());
+
+        dsl.desselecionarCombo("elementosForm:esportes", "Natacao");
+        opcoesMarcadas = dsl.obterValoresCombo("elementosForm:esportes");
+        Assert.assertEquals(2, opcoesMarcadas.size());
+        opcoesMarcadas.containsAll(Arrays.asList("Corrida", "Karate"));
+    }
+
+    @Test
+    public void deveInteragirComBotoes() {
+        dsl.clicarBotao("buttonSimple");
+        Assert.assertEquals("Obrigado!", dsl.obterValorCampo("buttonSimple"));
+    }
+
+    @Test
+    public void deveInteragirComLinks() {
+        dsl.clicarLink("Voltar");
+        Assert.assertEquals("Voltou!", dsl.obterTexto("resultado"));
+    }
+
+    @Test
+    public void deveBuscarextoNaPagina() {
+        Assert.assertEquals("Campo de Treinamento", dsl.obterTexto(By.tagName("h3")));
+        Assert.assertEquals("Cuidado onde clica, muitas armadilhas...", dsl.obterTexto(By.className("facilAchar")));
+    }
+
+    @Test
+    public void testJavascript (){
+        JavascriptExecutor js = (JavascriptExecutor) DriverFactory.getDriver();
+        js.executeScript("document.getElementById('elementosForm:nome').value = 'Escrito com javascript'");
+        js.executeScript("document.getElementById('elementosForm:sobrenome').type = 'radio'");
+
+        WebElement element = DriverFactory.getDriver().findElement(By.id("elementosForm:nome"));
+        js.executeScript("arguments[0].style.border = arguments[1]", element, "solid 4px red");
+    }
+
+
+
